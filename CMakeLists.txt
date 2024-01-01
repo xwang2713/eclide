@@ -183,13 +183,18 @@ ENDIF()
 SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_RPM_PACKAGE_VERSION}_${version}-${stagever}${CPACK_SYSTEM_NAME}")
 MESSAGE ("-- Current release version is ${CPACK_PACKAGE_FILE_NAME}")
 
-find_file(CLIENTTOOLS_PACKAGE_FILE "hpccsystems-clienttools-community_${version}-${stagever}${CMAKE_SYSTEM_NAME}-${CPACK_RPM_PACKAGE_ARCHITECTURE}.exe" HINTS ${CMAKE_CURRENT_BINARY_DIR}/../HPCC-Platform )
+IF("${CT_ARCH}" STREQUAL "")
+  SET(CT_ARCH "${CPACK_RPM_PACKAGE_ARCHITECTURE}")
+ENDIF ()
+
+#find_file(CLIENTTOOLS_PACKAGE_FILE "hpccsystems-clienttools-community_${version}-${stagever}${CMAKE_SYSTEM_NAME}-${CPACK_RPM_PACKAGE_ARCHITECTURE}.exe" HINTS ${CMAKE_CURRENT_BINARY_DIR}/../HPCC-Platform )
+find_file(CLIENTTOOLS_PACKAGE_FILE "hpccsystems-clienttools-community_${version}-${stagever}${CMAKE_SYSTEM_NAME}-${CT_ARCH}.exe" HINTS ${CMAKE_CURRENT_BINARY_DIR}/../HPCC-Platform )
 MESSAGE ("-- Clienttools package: ${CLIENTTOOLS_PACKAGE_FILE}")
 if (CLIENTTOOLS_PACKAGE_FILE)
     install ( PROGRAMS ${CLIENTTOOLS_PACKAGE_FILE} DESTINATION tmp )
     get_filename_component(CLIENTTOOLS_PACKAGE_FILE_NAME ${CLIENTTOOLS_PACKAGE_FILE} NAME)
     list ( APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-        ExecWait '$INSTDIR\\\\tmp\\\\${CLIENTTOOLS_PACKAGE_FILE_NAME} /S /D=$INSTDIR\\\\..\\\\clienttools'
+        ExecWait '$INSTDIR\\\\tmp\\\\${CLIENTTOOLS_PACKAGE_FILE_NAME} /S' 
 ")
 endif (CLIENTTOOLS_PACKAGE_FILE)
 
